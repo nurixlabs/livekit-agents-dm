@@ -258,6 +258,7 @@ class AgentSession(rtc.EventEmitter[EventTypes], Generic[Userdata_T]):
         self._closing_task: asyncio.Task[None] | None = None
         self._job_context_cb_registered: bool = False
         
+        # VAD duration tracking for manual turn detection
         self.speech_duration: float = 0.0
         self.silence_duration: float = 0.0
 

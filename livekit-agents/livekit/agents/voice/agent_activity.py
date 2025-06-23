@@ -824,10 +824,14 @@ class AgentActivity(RecognitionHooks):
         self._session._update_user_state("listening")
 
     def on_vad_inference_done(self, ev: vad.VADEvent) -> None:
+        # Always update VAD durations
         try:
             self.set_vad_variable(round(ev.speech_duration, 3), round(ev.silence_duration, 3))
+            # Debug logging
+            if ev.speech_duration > 0 or (int(time.time() * 10) % 50 == 0):
+                logger.debug(f"VAD Event - Speech: {ev.speech_duration:.3f}s, Silence: {ev.silence_duration:.3f}s, Speaking: {ev.speaking}")
         except Exception as e:
-            logger.error(f"Error in set_vad_variable: {e}")
+            logger.error(f"Error updating VAD durations: {e}")
 
         if self._turn_detection_mode in ("manual", "realtime_llm"):
             # ignore vad inference done event if turn_detection is manual or realtime_llm
